@@ -52,7 +52,8 @@ async function main() {
     const { lastNumber, lastDueOn } = await getLastMilestone();
     console.log('Creating new milestone...');
     const createdMilestone = await createMilestone(lastNumber, lastDueOn);
-    core.setOutput('milestonenumber', String(createdMilestone.data.number));
+    console.log(`Milestone ${createdMilestone.data.number} created!`);
+    //core.setOutput('milestonenumber', String(createdMilestone.data.number));
   } catch (error) {
     core.setFailed(error.message);
   }
