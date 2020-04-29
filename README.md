@@ -1,5 +1,10 @@
-# Sprint Milestone Action
-Automatically generate Milestones to manage sprints
+# Sprint Milestone Action [![Donate](https://img.shields.io/badge/paypal-donate-179BD7.svg)](https://www.paypal.me/dviolante)
+Automatically generate milestones to manage sprints.
+
+## How it works
+1. Get the current milestones
+2. Get the milestone with the highest due date
+3. Generate a new milestone using that due date plus `sprint-duration` weeks (see inputs below)
 
 ## Inputs
 
@@ -25,7 +30,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        sprint-duration: 1 # Default
+        sprint-duration: 2 # Default is 1
     - name: Sprint Milestone Step 2
       run: echo -e "Milestone created!\nName=${{ steps.sm1.outputs.milestone-title }}\nNumber=${{ steps.sm1.outputs.milestone-number }}\nDueOn=${{ steps.sm1.outputs.milestone-dueon }}"
 ```
+
+### Bug or feedback?
+Please open an issue.
+
+### Author
+- [Davide Violante](https://github.com/DavideViolante)
