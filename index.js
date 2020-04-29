@@ -1,5 +1,4 @@
 const core = require('@actions/core');
-//const github = require('@actions/github');
 const axios = require('axios');
 const moment = require('moment');
 
@@ -8,7 +7,6 @@ const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
 const AUTH_HEADER = {
   Authorization: `token ${GITHUB_TOKEN}`
 };
-
 const MILESTONES_ENDPOINT = `${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/milestones`;
 
 async function getLastMilestone() {
@@ -52,8 +50,8 @@ async function main() {
     const { lastNumber, lastDueOn } = await getLastMilestone();
     console.log('Creating new milestone...');
     const createdMilestone = await createMilestone(lastNumber, lastDueOn);
-    console.log(`Milestone ${createdMilestone.data.number} created!`);
-    //core.setOutput('milestonenumber', String(createdMilestone.data.number));
+    const { title, number, due_on } = createdMilestone.data;
+    console.log(`Milestone created!\nName: ${title}\nNumber: ${number}\nDue date: ${due_on}`);
   } catch (error) {
     core.setFailed(error.message);
   }

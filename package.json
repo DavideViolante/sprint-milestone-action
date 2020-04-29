@@ -19,7 +19,6 @@
   "homepage": "https://github.com/DavideViolante/sprint-milestone-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.3",
-    "@actions/github": "^2.1.1",
     "axios": "^0.19.2",
     "moment": "^2.24.0"
   }
