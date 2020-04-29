@@ -8,14 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Sprint Milestone
     steps:
-    - name: Sprint Milestone
+    - name: Sprint Milestone Step 1
       id: sprintmilestone
+      uses: davideviolante/sprint-milestone-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: davideviolante/sprint-milestone-action@master
-      
-    #  with:
-    #    who-to-greet: 'Mona the Octocat'
-    # Use the output from the `hello` step
-    #- name: Get the output
-    #  run: echo "Milestone ${{ steps.sprintmilestone.outputs.milestonenumber }} created"
+      with:
+        sprint-duration: 2
+    - name: Sprint Milestone Step 2
+      run: echo "${{ steps.sm1.outputs.milestone-title }} - ${{ steps.sm1.outputs.milestone-number }} - ${{ steps.sm1.outputs.milestone-dueon }}"

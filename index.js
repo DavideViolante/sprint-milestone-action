@@ -32,14 +32,14 @@ async function getLastMilestone() {
   };
 }
 
-function createMilestone(lastNumber, lastDueOn) {
+function createMilestone(lastNumber, lastDueOn, sprintDuration = 1) {
   return axios({
     method: 'POST',
     url: MILESTONES_ENDPOINT,
     headers: AUTH_HEADER,
     data: {
       title: `Sprint #${lastNumber + 1}`,
-      due_on: moment(lastDueOn).add(1, 'week') // YYYY-MM-DDTHH:MM:SSZ
+      due_on: moment(lastDueOn).add(+sprintDuration, 'week') // YYYY-MM-DDTHH:MM:SSZ
     }
   });
 }
@@ -49,8 +49,12 @@ async function main() {
     console.log('Getting last milestone...');
     const { lastNumber, lastDueOn } = await getLastMilestone();
     console.log('Creating new milestone...');
-    const createdMilestone = await createMilestone(lastNumber, lastDueOn);
+    const sprintDuration = core.getInput('sprint-duration');
+    const createdMilestone = await createMilestone(lastNumber, lastDueOn, sprintDuration);
     const { title, number, due_on } = createdMilestone.data;
+    core.setOutput('milestone-title', title);
+    core.setOutput('milestone-number', String(number));
+    core.setOutput('milestone-dueon', due_on);
     console.log(`Milestone created!\nName: ${title}\nNumber: ${number}\nDue date: ${due_on}`);
   } catch (error) {
     core.setFailed(error.message);
