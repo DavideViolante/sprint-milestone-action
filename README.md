@@ -15,9 +15,10 @@ The duration of the sprint expressed in weeks. Default is `1`.
 ## Example usage
 
 ```yaml
-schedule:
-  # Every monday at 12UTC, create the new milestone
-  - cron: "0 12 * * 1"
+on:
+  schedule:
+    # Every monday at 12UTC, create the new milestone
+    - cron: "0 12 * * 1"
 
 jobs:
   sprint_milestone_job:
