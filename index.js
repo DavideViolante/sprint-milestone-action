@@ -11,6 +11,10 @@ const AUTH_HEADER = {
 
 const MILESTONES_ENDPOINT = `${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/milestones`;
 
+console.log('token', GITHUB_TOKEN);
+console.log('repo', GITHUB_REPOSITORY);
+
+
 async function getLastMilestone() {
   const allMilestones = await axios({
     method: 'GET',
