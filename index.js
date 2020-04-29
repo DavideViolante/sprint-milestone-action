@@ -54,7 +54,7 @@ async function main() {
     const createdMilestone = await createMilestone(lastNumber, lastDueOn);
     core.setOutput('milestonenumber', createdMilestone.data.number);
   } catch (error) {
-    core.setFailed(error);
+    core.setFailed(JSON.stringify(error.message));
   }
 }
 
