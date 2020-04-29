@@ -1,0 +1,17 @@
+on:
+  schedule:
+    - cron: 15 9 * * *
+
+jobs:
+  sprint_milestone_job:
+    runs-on: ubuntu-latest
+    name: Sprint Milestone
+    steps:
+    - name: Sprint Milestone
+      id: sprintmilestone
+      uses: davideviolante/sprint-milestone-action@master
+    #  with:
+    #    who-to-greet: 'Mona the Octocat'
+    # Use the output from the `hello` step
+    - name: Get the output
+      run: echo "Milestone created ${{ steps.sprintmilestone.outputs.milestone-id }}"
