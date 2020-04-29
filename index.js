@@ -46,16 +46,16 @@ function createMilestone(lastNumber, lastDueOn, sprintDuration = 1) {
 
 async function main() {
   try {
+    const sprintDuration = core.getInput('sprint-duration');
     console.log('Getting last milestone...');
     const { lastNumber, lastDueOn } = await getLastMilestone();
-    console.log('Creating new milestone...');
-    const sprintDuration = core.getInput('sprint-duration');
+    console.log(`Last milestone number is ${lastNumber} due on ${lastDueOn}`);
+    console.log(`Creating new milestone with number ${lastNumber}+1 and due on ${lastDueOn}+${sprintDuration} weeks`);
     const createdMilestone = await createMilestone(lastNumber, lastDueOn, sprintDuration);
     const { title, number, due_on } = createdMilestone.data;
     core.setOutput('milestone-title', title);
     core.setOutput('milestone-number', String(number));
     core.setOutput('milestone-dueon', due_on);
-    console.log(`Milestone created!\nName: ${title}\nNumber: ${number}\nDue date: ${due_on}`);
   } catch (error) {
     core.setFailed(error.message);
   }

@@ -1,19 +1,16 @@
 on: [push]
 
-#  schedule:
-#    - cron: "*/5 * * * *"
-
 jobs:
   sprint_milestone_job:
     runs-on: ubuntu-latest
     name: Sprint Milestone
     steps:
     - name: Sprint Milestone Step 1
-      id: sprintmilestone
+      id: sm1
       uses: davideviolante/sprint-milestone-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        sprint-duration: 2
+        sprint-duration: 1
     - name: Sprint Milestone Step 2
-      run: echo "${{ steps.sm1.outputs.milestone-title }} - ${{ steps.sm1.outputs.milestone-number }} - ${{ steps.sm1.outputs.milestone-dueon }}"
+      run: echo -e "Milestone created!\nName=${{ steps.sm1.outputs.milestone-title }}\nNumber=${{ steps.sm1.outputs.milestone-number }}\nDueOn=${{ steps.sm1.outputs.milestone-dueon }}"

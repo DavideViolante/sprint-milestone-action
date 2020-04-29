@@ -27,5 +27,5 @@ jobs:
       with:
         sprint-duration: 1 # Default
     - name: Sprint Milestone Step 2
-      run: echo "${{ steps.sm1.outputs.milestone-title }} - ${{ steps.sm1.outputs.milestone-number }} - ${{ steps.sm1.outputs.milestone-dueon }}"
+      run: echo -e "Milestone created!\nName=${{ steps.sm1.outputs.milestone-title }}\nNumber=${{ steps.sm1.outputs.milestone-number }}\nDueOn=${{ steps.sm1.outputs.milestone-dueon }}"
 ```
