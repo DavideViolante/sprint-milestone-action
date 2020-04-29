@@ -1,8 +1,18 @@
 name: 'Sprint Milestone Action'
-description: 'Automatically create Milestones to manage sprints'
+description: 'Automatically generate Milestones to manage sprints'
+branding:
+  icon: 'calendar'
+  color: 'green'
+inputs:
+  sprint-duration:
+    description: 'Duration of the sprint expressed in weeks'
 outputs:
-  milestone-id: # id of output
-    description: 'ID of the newly created Milestone'
+  milestone-title:
+    description: 'Milestone title'
+  milestone-number:
+    description: 'Milestone number'
+  milestone-dueon:
+    description: 'Milestone due on'
 runs:
   using: 'node12'
   main: 'index.js'
