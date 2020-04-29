@@ -10,7 +10,10 @@ jobs:
     steps:
     - name: Sprint Milestone
       id: sprintmilestone
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       uses: davideviolante/sprint-milestone-action@master
+      
     #  with:
     #    who-to-greet: 'Mona the Octocat'
     # Use the output from the `hello` step
