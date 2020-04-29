@@ -18,4 +18,4 @@ jobs:
     #    who-to-greet: 'Mona the Octocat'
     # Use the output from the `hello` step
     - name: Get the output
-      run: echo "Milestone created ${{ steps.sprintmilestone.outputs.milestone-id }}"
+      run: echo "Milestone ${{ steps.sprintmilestone.outputs.milestonenumber }} created"

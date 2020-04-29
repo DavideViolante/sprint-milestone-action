@@ -1,8 +1,6 @@
 # Sprint Milestone Action
 Automatically generate Milestones to manage sprints
 
-## Inputs
-
 ## Outputs
 
 ### `milestone-id`

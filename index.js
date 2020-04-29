@@ -1,5 +1,5 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
+//const github = require('@actions/github');
 const axios = require('axios');
 const moment = require('moment');
 
@@ -10,10 +10,6 @@ const AUTH_HEADER = {
 };
 
 const MILESTONES_ENDPOINT = `${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/milestones`;
-
-console.log('token', GITHUB_TOKEN);
-console.log('repo', GITHUB_REPOSITORY);
-
 
 async function getLastMilestone() {
   const allMilestones = await axios({
@@ -52,12 +48,11 @@ function createMilestone(lastNumber, lastDueOn) {
 
 async function main() {
   try {
+    console.log('Getting last milestone...');
     const { lastNumber, lastDueOn } = await getLastMilestone();
+    console.log('Creating new milestone...');
     const createdMilestone = await createMilestone(lastNumber, lastDueOn);
-    core.setOutput('milestone-id', createdMilestone.data.number);
-    // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
+    core.setOutput('milestonenumber', createdMilestone.data.number);
   } catch (error) {
     core.setFailed(error.message);
   }
