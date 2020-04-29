@@ -1,0 +1,26 @@
+{
+  "name": "sprint-milestone-action",
+  "version": "1.0.0",
+  "description": "Automatically create Milestones to manage sprints",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavideViolante/sprint-milestone-action.git"
+  },
+  "author": "Davide Violante",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavideViolante/sprint-milestone-action/issues"
+  },
+  "homepage": "https://github.com/DavideViolante/sprint-milestone-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "@actions/github": "^2.1.1",
+    "axios": "^0.19.2",
+    "moment": "^2.24.0"
+  }
+}
