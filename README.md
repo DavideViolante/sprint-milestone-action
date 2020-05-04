@@ -29,7 +29,7 @@ jobs:
     steps:
     - name: Sprint Milestone Step 1
       id: sm1
-      uses: davideviolante/sprint-milestone-action@v1
+      uses: davideviolante/sprint-milestone-action@v1.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
