@@ -15,6 +15,8 @@ The duration of the sprint expressed in weeks. Default is `1`.
 ## Example usage
 
 ```yaml
+name: Sprint Milestone
+
 on:
   schedule:
     # Every monday at 12UTC, create the new milestone
