@@ -6,6 +6,8 @@ branding:
 inputs:
   sprint-duration:
     description: 'Duration of the sprint expressed in weeks'
+    required: false
+    default: '1'
 outputs:
   milestone-title:
     description: 'Milestone title'
