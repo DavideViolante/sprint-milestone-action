@@ -20,6 +20,6 @@
   "dependencies": {
     "@actions/core": "^1.2.4",
     "axios": "^0.19.2",
-    "moment": "^2.25.2"
+    "moment": "^2.25.3"
   }
 }
