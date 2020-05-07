@@ -12,6 +12,20 @@ Automatically generate milestones to manage sprints.
 
 The duration of the sprint expressed in weeks. Default is `1`.
 
+## Outputs
+
+### milestone-number
+
+The new milestone number.
+
+### milestone-title
+
+The new milestone title.
+
+### milestone-due_on
+
+The new milestone due on.
+
 ## Example usage
 
 ```yaml
@@ -23,19 +37,14 @@ on:
     - cron: "0 12 * * 1"
 
 jobs:
-  sprint_milestone_job:
+  sprint_milestone:
     runs-on: ubuntu-latest
-    name: Sprint Milestone
     steps:
-    - name: Sprint Milestone Step 1
-      id: sm1
       uses: davideviolante/sprint-milestone-action@v1.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         sprint-duration: 2 # Default is 1
-    - name: Sprint Milestone Step 2
-      run: echo -e "Milestone created!\nName=${{ steps.sm1.outputs.milestone-title }}\nNumber=${{ steps.sm1.outputs.milestone-number }}\nDueOn=${{ steps.sm1.outputs.milestone-dueon }}"
 ```
 
 ## Bug or feedback?
