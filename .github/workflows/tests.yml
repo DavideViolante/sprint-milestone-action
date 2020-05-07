@@ -1,4 +1,4 @@
-name: Tests
+name: Node.js CI
 
 on:
   push:
@@ -20,5 +20,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm i -g mocha
-    - run: npm test
+    - run: npm i -g eslint mocha
+    - run: eslint ./
+    - run: mocha
