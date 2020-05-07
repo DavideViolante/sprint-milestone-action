@@ -47,10 +47,10 @@ function createMilestone(lastNumber, lastDueOn, sprintDuration) {
 async function main() {
   try {
     const sprintDuration = core.getInput('sprint-duration'); // Default is 1
-    console.log('Getting last milestone...');
+    core.info('Getting last milestone...');
     const { lastNumber, lastDueOn } = await getLastMilestone();
-    console.log(`Last milestone number is ${lastNumber} due on ${lastDueOn}`);
-    console.log(`Creating new milestone with number ${lastNumber} + 1 and due on ${lastDueOn} + ${sprintDuration} weeks`);
+    core.info(`Last milestone number is ${lastNumber} due on ${lastDueOn}`);
+    core.info(`Creating new milestone with number ${lastNumber} + 1 and due on ${lastDueOn} + ${sprintDuration} weeks`);
     const createdMilestone = await createMilestone(lastNumber, lastDueOn, sprintDuration);
     const { title, number, due_on } = createdMilestone.data;
     core.setOutput('milestone-title', title);
