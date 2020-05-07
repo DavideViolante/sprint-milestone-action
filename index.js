@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const axios = require('axios');
-const moment = require('moment');
+
+const { calculateNextMilestone, getLastMilestone } = require('./functions');
 
 const GITHUB_API_URL = 'https://api.github.com';
 const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
@@ -9,8 +10,8 @@ const AUTH_HEADER = {
 };
 const MILESTONES_ENDPOINT = `${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/milestones`;
 
-async function getLastMilestone() {
-  const allMilestones = await axios({
+async function getMilestones() {
+  return axios({
     method: 'GET',
     url: MILESTONES_ENDPOINT,
     headers: AUTH_HEADER,
@@ -20,26 +21,16 @@ async function getLastMilestone() {
       direction: 'desc'
     }
   });
-  if (!allMilestones.data.length) {
-    return {
-      lastNumber: 1,
-      lastDueOn: moment().format()
-    };
-  }
-  return {
-    lastNumber: allMilestones.data[0].number,
-    lastDueOn: allMilestones.data[0].due_on
-  };
 }
 
-function createMilestone(lastNumber, lastDueOn, sprintDuration) {
+function createMilestone(number, due_on) {
   return axios({
     method: 'POST',
     url: MILESTONES_ENDPOINT,
     headers: AUTH_HEADER,
     data: {
-      title: `Sprint #${lastNumber + 1}`,
-      due_on: moment(lastDueOn).add(+sprintDuration, 'week') // YYYY-MM-DDTHH:MM:SSZ
+      title: `Sprint #${number}`,
+      due_on: due_on // YYYY-MM-DDTHH:MM:SSZ
     }
   });
 }
@@ -48,14 +39,15 @@ async function main() {
   try {
     const sprintDuration = core.getInput('sprint-duration'); // Default is 1
     core.info('Getting last milestone...');
-    const { lastNumber, lastDueOn } = await getLastMilestone();
+    const milestones = await getMilestones();
+    const { lastNumber, lastDueOn } = getLastMilestone(milestones.data);
     core.info(`Last milestone number is ${lastNumber} due on ${lastDueOn}`);
-    core.info(`Creating new milestone with number ${lastNumber} + 1 and due on ${lastDueOn} + ${sprintDuration} weeks`);
-    const createdMilestone = await createMilestone(lastNumber, lastDueOn, sprintDuration);
-    const { title, number, due_on } = createdMilestone.data;
-    core.setOutput('milestone-title', title);
-    core.setOutput('milestone-number', String(number));
-    core.setOutput('milestone-dueon', due_on);
+    const { number, due_on } = calculateNextMilestone(lastNumber, lastDueOn, sprintDuration);
+    core.info(`Creating new milestone with number ${number} and due on ${due_on} (sprint duration: ${sprintDuration})`);
+    const createdMilestone = await createMilestone(number, due_on);
+    core.setOutput('milestone-number', String(createdMilestone.data.number));
+    core.setOutput('milestone-title', createdMilestone.data.title);
+    core.setOutput('milestone-due_on', createdMilestone.data.due_on);
   } catch (error) {
     core.setFailed(error.message);
   }
