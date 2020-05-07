@@ -1,3 +1,5 @@
+name: Sprint Milestone
+
 on: 
   push:
     branches: [ test ]
@@ -7,12 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Sprint Milestone
     steps:
-    - name: Sprint Milestone Step 1
-      id: sm1
+    - name: Sprint Milestone Action
       uses: davideviolante/sprint-milestone-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         sprint-duration: 1
-    - name: Sprint Milestone Step 2
-      run: echo -e "Milestone created!\nName=${{ steps.sm1.outputs.milestone-title }}\nNumber=${{ steps.sm1.outputs.milestone-number }}\nDueOn=${{ steps.sm1.outputs.milestone-dueon }}"
