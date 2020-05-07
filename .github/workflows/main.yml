@@ -5,13 +5,11 @@ on:
     branches: [ test ]
 
 jobs:
-  sprint_milestone_job:
+  sprint_milestone:
     runs-on: ubuntu-latest
-    name: Sprint Milestone
     steps:
-    - name: Sprint Milestone Action
-      uses: davideviolante/sprint-milestone-action@master
+    - uses: davideviolante/sprint-milestone-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        sprint-duration: 1
+        sprint-duration: 2 # Default is 1
