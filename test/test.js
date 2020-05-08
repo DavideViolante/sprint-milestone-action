@@ -1,7 +1,7 @@
 const moment = require('moment');
 const assert = require('assert');
 
-const { calculateNextMilestone, getLastMilestone } = require('./functions');
+const { calculateNextMilestone, getLastMilestone } = require('../functions');
 
 // Mock milestones are ordered by due_on desc by GitHub APIs (no need to test it)
 const mockMilestones = [
