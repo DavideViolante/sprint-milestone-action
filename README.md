@@ -1,4 +1,4 @@
-# Sprint Milestone Action [![Donate](https://img.shields.io/badge/paypal-donate-179BD7.svg)](https://www.paypal.me/dviolante)
+# Sprint Milestone Action [![](https://github.com/davideviolante/sprint-milestone-action/workflows/Tests/badge.svg)](https://github.com/DavideViolante/sprint-milestone-action/actions?query=workflow%3ATests) [![Donate](https://img.shields.io/badge/paypal-donate-179BD7.svg)](https://www.paypal.me/dviolante)
 Automatically generate milestones to manage sprints.
 
 ## How it works
