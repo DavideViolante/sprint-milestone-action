@@ -23,7 +23,7 @@
     "moment": "^2.25.3"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.22.1",
+    "@zeit/ncc": "^0.22.2",
     "eslint": "^7.0.0",
     "mocha": "^7.1.2"
   }
