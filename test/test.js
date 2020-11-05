@@ -25,15 +25,15 @@ const mockMilestonesNoData = [];
 
 describe('Sprint Milestone Action tests', () => {
   
-  it('Should get the milestone with highest due on', () => {
+  it('Should get the milestone with highest sprint number, regardless of due on', () => {
     const { lastNumber, lastDueOn } = getLastMilestone(mockMilestones);
-    assert.strictEqual(lastNumber, 3);
+    assert.strictEqual(lastNumber, 195);
     assert.strictEqual(lastDueOn, '2019-11-04T07:00:00Z');
   });
   
   it('Should create a new milestone if none are found', () => {
     const { lastNumber, lastDueOn } = getLastMilestone(mockMilestonesNoData);
-    assert.strictEqual(lastNumber, 1);
+    assert.strictEqual(lastNumber, 0);
     assert.strictEqual(moment(lastDueOn).format(), moment().format());
   });
 
