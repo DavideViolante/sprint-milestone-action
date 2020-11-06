@@ -10,8 +10,8 @@ function getLastMilestone(milestones) {
   const sortedMilestones = milestones
         .filter((v) => v != null ? v.title.match(/Sprint #\d+/) : false)
         .sort((a, b) => {
-        const s1 = a.title.substr(7, a.title.length - 1);
-        const s2 = b.title.substr(7, b.title.length - 1);
+        const s1 = parseInt(a.title.substr(8));
+        const s2 = parseInt(b.title.substr(8));
         if (s1 < s2) {
             return -1;
         }

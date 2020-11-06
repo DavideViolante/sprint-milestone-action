@@ -21,6 +21,25 @@ const mockMilestones = [
     due_on: '2019-10-07T07:00:00Z',
   }
 ];
+
+const mockMilestonesSprint11 = [
+  {
+    number: 3,
+    title: 'Sprint #9',
+    due_on: '2019-11-04T07:00:00Z',
+  },
+  {
+    number: 1,
+    title: 'Sprint #10',
+    due_on: '2019-10-21T07:00:00Z',
+  },
+  {
+    number: 2,
+    title: 'Sprint #1',
+    due_on: '2019-10-07T07:00:00Z',
+  }
+];
+
 const mockMilestonesNoData = [];
 
 describe('Sprint Milestone Action tests', () => {
@@ -35,6 +54,12 @@ describe('Sprint Milestone Action tests', () => {
     const { lastNumber, lastDueOn } = getLastMilestone(mockMilestonesNoData);
     assert.strictEqual(lastNumber, 0);
     assert.strictEqual(moment(lastDueOn).format(), moment().format());
+  });
+
+  it('Should create a new milestone for Sprint 11', () => {
+    const { lastNumber, lastDueOn } = getLastMilestone(mockMilestonesSprint11);
+    assert.strictEqual(lastNumber, 10);
+    assert.strictEqual(lastDueOn, '2019-10-21T07:00:00Z');
   });
 
   it('Should calculate the next milestone number and due on (sprint duration 1)', () => {
