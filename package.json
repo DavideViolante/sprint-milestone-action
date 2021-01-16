@@ -1,11 +1,12 @@
 {
   "name": "sprint-milestone-action",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Automatically create Milestones to manage sprints",
   "scripts": {
     "build": "ncc build index.js",
     "lint": "eslint ./",
-    "test": "mocha"
+    "test": "nyc mocha",
+    "coverage": "nyc --reporter=lcov --reporter=text mocha"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
   },
   "devDependencies": {
     "@zeit/ncc": "^0.22.3",
-    "eslint": "^7.16.0",
-    "mocha": "^8.2.1"
+    "eslint": "^7.18.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
   }
 }

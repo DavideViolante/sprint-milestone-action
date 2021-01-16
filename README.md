@@ -1,5 +1,5 @@
 # Sprint Milestone Action
-[![](https://github.com/davideviolante/sprint-milestone-action/workflows/Node.js%20CI/badge.svg)](https://github.com/DavideViolante/sprint-milestone-action/actions?query=workflow%3A%22Node.js+CI%22) [![Maintainability](https://api.codeclimate.com/v1/badges/60f9b3a6b4177a0bfe77/maintainability)](https://codeclimate.com/github/DavideViolante/sprint-milestone-action/maintainability) [![Donate](https://img.shields.io/badge/paypal-donate-179BD7.svg)](https://www.paypal.me/dviolante)
+[![](https://github.com/davideviolante/sprint-milestone-action/workflows/Node.js%20CI/badge.svg)](https://github.com/DavideViolante/sprint-milestone-action/actions?query=workflow%3A%22Node.js+CI%22) [![Coverage Status](https://coveralls.io/repos/github/DavideViolante/sprint-milestone-action/badge.svg?branch=master)](https://coveralls.io/github/DavideViolante/sprint-milestone-action?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/60f9b3a6b4177a0bfe77/maintainability)](https://codeclimate.com/github/DavideViolante/sprint-milestone-action/maintainability) [![Donate](https://img.shields.io/badge/paypal-donate-179BD7.svg)](https://www.paypal.me/dviolante)
 
 Automatically generate milestones to manage sprints.
 
@@ -42,7 +42,7 @@ jobs:
   sprint_milestone:
     runs-on: ubuntu-latest
     steps:
-    - uses: davideviolante/sprint-milestone-action@v2.1.1
+    - uses: davideviolante/sprint-milestone-action@v2.1.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
