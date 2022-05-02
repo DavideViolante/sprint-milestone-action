@@ -21,7 +21,7 @@
   "dependencies": {
     "@actions/core": "^1.7.0",
     "axios": "^0.27.2",
-    "moment": "^2.29.2"
+    "moment": "^2.29.3"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.22.3",
