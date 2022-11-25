@@ -1,0 +1,25 @@
+{
+  "env": {
+    "commonjs": true,
+    "es2021": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": ["eslint:recommended", "google"],
+  "parserOptions": {
+    "ecmaVersion": 12
+  },
+  "ignorePatterns": [
+    "dist/*"
+  ],
+  "rules": {
+    "camelcase": "off",
+    "max-len": [
+      "error", 120
+    ],
+    "object-curly-spacing": [
+      "error", "always"
+    ],
+    "space-infix-ops": "error"
+  }
+}

@@ -19,18 +19,17 @@ const mockMilestones = [
     number: 2,
     title: 'Sprint #191',
     due_on: '2019-10-07T07:00:00Z',
-  }
+  },
 ];
 const mockMilestonesNoData = [];
 
 describe('Sprint Milestone Action tests', () => {
-  
   it('Should get the milestone with highest due on', () => {
     const { lastNumber, lastDueOn } = getLastMilestone(mockMilestones);
     assert.strictEqual(lastNumber, 3);
     assert.strictEqual(lastDueOn, '2019-11-04T07:00:00Z');
   });
-  
+
   it('Should create a new milestone if none are found', () => {
     const { lastNumber, lastDueOn } = getLastMilestone(mockMilestonesNoData);
     assert.strictEqual(lastNumber, 1);
@@ -54,5 +53,4 @@ describe('Sprint Milestone Action tests', () => {
     assert.strictEqual(number, 2);
     assert.strictEqual(moment(due_on).format(), moment().add(sprintDuration, 'weeks').format());
   });
-  
 });

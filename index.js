@@ -6,10 +6,14 @@ const { calculateNextMilestone, getLastMilestone } = require('./functions');
 const GITHUB_API_URL = 'https://api.github.com';
 const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
 const AUTH_HEADER = {
-  Authorization: `token ${GITHUB_TOKEN}`
+  Authorization: `token ${GITHUB_TOKEN}`,
 };
 const MILESTONES_ENDPOINT = `${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/milestones`;
 
+/**
+ * Get milestones from GitHub repo
+ * @return {Array} Array of milestones
+ */
 async function getMilestones() {
   return axios({
     method: 'GET',
@@ -18,11 +22,17 @@ async function getMilestones() {
     params: {
       state: 'all',
       sort: 'due_on',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   });
 }
 
+/**
+ * Create new milestone
+ * @param {number} number Sprint number
+ * @param {date} due_on Sprint due on date
+ * @return {object} New milestone
+ */
 function createMilestone(number, due_on) {
   return axios({
     method: 'POST',
@@ -30,11 +40,14 @@ function createMilestone(number, due_on) {
     headers: AUTH_HEADER,
     data: {
       title: `Sprint #${number}`,
-      due_on: due_on // YYYY-MM-DDTHH:MM:SSZ
-    }
+      due_on, // YYYY-MM-DDTHH:MM:SSZ
+    },
   });
 }
 
+/**
+ * Run the action main function
+ */
 async function main() {
   try {
     const sprintDuration = core.getInput('sprint-duration'); // Default is 1
