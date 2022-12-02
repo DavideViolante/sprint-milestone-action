@@ -6,29 +6,41 @@
 
 const moment = __nccwpck_require__(9623);
 
+/**
+ * Get number and due on of last created milestone
+ * @param {Array} milestones Milestones
+ * @return {object} number and due on of last created milestone
+ */
 function getLastMilestone(milestones) {
   if (!milestones.length) {
     return {
       lastNumber: 1,
-      lastDueOn: moment().format()
+      lastDueOn: moment().format(),
     };
   }
   return {
     lastNumber: milestones[0].number,
-    lastDueOn: milestones[0].due_on
+    lastDueOn: milestones[0].due_on,
   };
 }
 
+/**
+ * Get number and due on date of next milestone to create
+ * @param {number} lastNumber Last milestone number
+ * @param {date} lastDueOn Last milestone due on date
+ * @param {number} sprintDuration Sprint duration in weeks
+ * @return {object} Number and due on of next milestone
+ */
 function calculateNextMilestone(lastNumber, lastDueOn, sprintDuration) {
   return {
     number: lastNumber + 1,
-    due_on: moment(lastDueOn).add(+sprintDuration, 'weeks').format()
-  }
+    due_on: moment(lastDueOn).add(+sprintDuration, 'weeks').format(),
+  };
 }
 
 module.exports = {
   getLastMilestone,
-  calculateNextMilestone
+  calculateNextMilestone,
 };
 
 
@@ -173,7 +185,6 @@ const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
 const os = __importStar(__nccwpck_require__(2037));
 const path = __importStar(__nccwpck_require__(1017));
-const uuid_1 = __nccwpck_require__(8974);
 const oidc_utils_1 = __nccwpck_require__(8041);
 /**
  * The code to exit an action
@@ -203,20 +214,9 @@ function exportVariable(name, val) {
     process.env[name] = convertedVal;
     const filePath = process.env['GITHUB_ENV'] || '';
     if (filePath) {
-        const delimiter = `ghadelimiter_${uuid_1.v4()}`;
-        // These should realistically never happen, but just in case someone finds a way to exploit uuid generation let's not allow keys or values that contain the delimiter.
-        if (name.includes(delimiter)) {
-            throw new Error(`Unexpected input: name should not contain the delimiter "${delimiter}"`);
-        }
-        if (convertedVal.includes(delimiter)) {
-            throw new Error(`Unexpected input: value should not contain the delimiter "${delimiter}"`);
-        }
-        const commandValue = `${name}<<${delimiter}${os.EOL}${convertedVal}${os.EOL}${delimiter}`;
-        file_command_1.issueCommand('ENV', commandValue);
+        return file_command_1.issueFileCommand('ENV', file_command_1.prepareKeyValueMessage(name, val));
     }
-    else {
-        command_1.issueCommand('set-env', { name }, convertedVal);
-    }
+    command_1.issueCommand('set-env', { name }, convertedVal);
 }
 exports.exportVariable = exportVariable;
 /**
@@ -234,7 +234,7 @@ exports.setSecret = setSecret;
 function addPath(inputPath) {
     const filePath = process.env['GITHUB_PATH'] || '';
     if (filePath) {
-        file_command_1.issueCommand('PATH', inputPath);
+        file_command_1.issueFileCommand('PATH', inputPath);
     }
     else {
         command_1.issueCommand('add-path', {}, inputPath);
@@ -274,7 +274,10 @@ function getMultilineInput(name, options) {
     const inputs = getInput(name, options)
         .split('\n')
         .filter(x => x !== '');
-    return inputs;
+    if (options && options.trimWhitespace === false) {
+        return inputs;
+    }
+    return inputs.map(input => input.trim());
 }
 exports.getMultilineInput = getMultilineInput;
 /**
@@ -307,8 +310,12 @@ exports.getBooleanInput = getBooleanInput;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
+    const filePath = process.env['GITHUB_OUTPUT'] || '';
+    if (filePath) {
+        return file_command_1.issueFileCommand('OUTPUT', file_command_1.prepareKeyValueMessage(name, value));
+    }
     process.stdout.write(os.EOL);
-    command_1.issueCommand('set-output', { name }, value);
+    command_1.issueCommand('set-output', { name }, utils_1.toCommandValue(value));
 }
 exports.setOutput = setOutput;
 /**
@@ -437,7 +444,11 @@ exports.group = group;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function saveState(name, value) {
-    command_1.issueCommand('save-state', { name }, value);
+    const filePath = process.env['GITHUB_STATE'] || '';
+    if (filePath) {
+        return file_command_1.issueFileCommand('STATE', file_command_1.prepareKeyValueMessage(name, value));
+    }
+    command_1.issueCommand('save-state', { name }, utils_1.toCommandValue(value));
 }
 exports.saveState = saveState;
 /**
@@ -503,13 +514,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.issueCommand = void 0;
+exports.prepareKeyValueMessage = exports.issueFileCommand = void 0;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const fs = __importStar(__nccwpck_require__(7147));
 const os = __importStar(__nccwpck_require__(2037));
+const uuid_1 = __nccwpck_require__(8974);
 const utils_1 = __nccwpck_require__(5278);
-function issueCommand(command, message) {
+function issueFileCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
     if (!filePath) {
         throw new Error(`Unable to find environment variable for file command ${command}`);
@@ -521,7 +533,22 @@ function issueCommand(command, message) {
         encoding: 'utf8'
     });
 }
-exports.issueCommand = issueCommand;
+exports.issueFileCommand = issueFileCommand;
+function prepareKeyValueMessage(key, value) {
+    const delimiter = `ghadelimiter_${uuid_1.v4()}`;
+    const convertedValue = utils_1.toCommandValue(value);
+    // These should realistically never happen, but just in case someone finds a
+    // way to exploit uuid generation let's not allow keys or values that contain
+    // the delimiter.
+    if (key.includes(delimiter)) {
+        throw new Error(`Unexpected input: name should not contain the delimiter "${delimiter}"`);
+    }
+    if (convertedValue.includes(delimiter)) {
+        throw new Error(`Unexpected input: value should not contain the delimiter "${delimiter}"`);
+    }
+    return `${key}<<${delimiter}${os.EOL}${convertedValue}${os.EOL}${delimiter}`;
+}
+exports.prepareKeyValueMessage = prepareKeyValueMessage;
 //# sourceMappingURL=file-command.js.map
 
 /***/ }),
@@ -6879,6 +6906,11 @@ events.forEach(function (event) {
   };
 });
 
+var InvalidUrlError = createErrorType(
+  "ERR_INVALID_URL",
+  "Invalid URL",
+  TypeError
+);
 // Error types with codes
 var RedirectionError = createErrorType(
   "ERR_FR_REDIRECTION_FAILURE",
@@ -6939,10 +6971,10 @@ RedirectableRequest.prototype.write = function (data, encoding, callback) {
   }
 
   // Validate input and shift parameters if necessary
-  if (!(typeof data === "string" || typeof data === "object" && ("length" in data))) {
+  if (!isString(data) && !isBuffer(data)) {
     throw new TypeError("data should be a string, Buffer or Uint8Array");
   }
-  if (typeof encoding === "function") {
+  if (isFunction(encoding)) {
     callback = encoding;
     encoding = null;
   }
@@ -6971,11 +7003,11 @@ RedirectableRequest.prototype.write = function (data, encoding, callback) {
 // Ends the current native request
 RedirectableRequest.prototype.end = function (data, encoding, callback) {
   // Shift parameters if necessary
-  if (typeof data === "function") {
+  if (isFunction(data)) {
     callback = data;
     data = encoding = null;
   }
-  else if (typeof encoding === "function") {
+  else if (isFunction(encoding)) {
     callback = encoding;
     encoding = null;
   }
@@ -7134,25 +7166,30 @@ RedirectableRequest.prototype._performRequest = function () {
   // If specified, use the agent corresponding to the protocol
   // (HTTP and HTTPS use different types of agents)
   if (this._options.agents) {
-    var scheme = protocol.substr(0, protocol.length - 1);
+    var scheme = protocol.slice(0, -1);
     this._options.agent = this._options.agents[scheme];
   }
 
-  // Create the native request
+  // Create the native request and set up its event handlers
   var request = this._currentRequest =
         nativeProtocol.request(this._options, this._onNativeResponse);
-  this._currentUrl = url.format(this._options);
-
-  // Set up event handlers
   request._redirectable = this;
-  for (var e = 0; e < events.length; e++) {
-    request.on(events[e], eventHandlers[events[e]]);
+  for (var event of events) {
+    request.on(event, eventHandlers[event]);
   }
+
+  // RFC7230§5.3.1: When making a request directly to an origin server, […]
+  // a client MUST send only the absolute path […] as the request-target.
+  this._currentUrl = /^\//.test(this._options.path) ?
+    url.format(this._options) :
+    // When making a request to a proxy, […]
+    // a client MUST send the target URI in absolute-form […].
+    this._options.path;
 
   // End a redirected request
   // (The first request must be ended explicitly with RedirectableRequest#end)
   if (this._isRedirect) {
-    // Write the request entity and end.
+    // Write the request entity and end
     var i = 0;
     var self = this;
     var buffers = this._requestBodyBuffers;
@@ -7226,10 +7263,21 @@ RedirectableRequest.prototype._processResponse = function (response) {
     return;
   }
 
+  // Store the request headers if applicable
+  var requestHeaders;
+  var beforeRedirect = this._options.beforeRedirect;
+  if (beforeRedirect) {
+    requestHeaders = Object.assign({
+      // The Host header was set by nativeProtocol.request
+      Host: response.req.getHeader("host"),
+    }, this._options.headers);
+  }
+
   // RFC7231§6.4: Automatic redirection needs to done with
   // care for methods not known to be safe, […]
   // RFC7231§6.4.2–3: For historical reasons, a user agent MAY change
   // the request method from POST to GET for the subsequent request.
+  var method = this._options.method;
   if ((statusCode === 301 || statusCode === 302) && this._options.method === "POST" ||
       // RFC7231§6.4.4: The 303 (See Other) status code indicates that
       // the server is redirecting the user agent to a different resource […]
@@ -7257,7 +7305,7 @@ RedirectableRequest.prototype._processResponse = function (response) {
     redirectUrl = url.resolve(currentUrl, location);
   }
   catch (cause) {
-    this.emit("error", new RedirectionError(cause));
+    this.emit("error", new RedirectionError({ cause: cause }));
     return;
   }
 
@@ -7277,10 +7325,18 @@ RedirectableRequest.prototype._processResponse = function (response) {
   }
 
   // Evaluate the beforeRedirect callback
-  if (typeof this._options.beforeRedirect === "function") {
-    var responseDetails = { headers: response.headers };
+  if (isFunction(beforeRedirect)) {
+    var responseDetails = {
+      headers: response.headers,
+      statusCode: statusCode,
+    };
+    var requestDetails = {
+      url: currentUrl,
+      method: method,
+      headers: requestHeaders,
+    };
     try {
-      this._options.beforeRedirect.call(null, this._options, responseDetails);
+      beforeRedirect(this._options, responseDetails, requestDetails);
     }
     catch (err) {
       this.emit("error", err);
@@ -7294,7 +7350,7 @@ RedirectableRequest.prototype._processResponse = function (response) {
     this._performRequest();
   }
   catch (cause) {
-    this.emit("error", new RedirectionError(cause));
+    this.emit("error", new RedirectionError({ cause: cause }));
   }
 };
 
@@ -7316,15 +7372,19 @@ function wrap(protocols) {
     // Executes a request, following redirects
     function request(input, options, callback) {
       // Parse parameters
-      if (typeof input === "string") {
-        var urlStr = input;
+      if (isString(input)) {
+        var parsed;
         try {
-          input = urlToOptions(new URL(urlStr));
+          parsed = urlToOptions(new URL(input));
         }
         catch (err) {
           /* istanbul ignore next */
-          input = url.parse(urlStr);
+          parsed = url.parse(input);
         }
+        if (!isString(parsed.protocol)) {
+          throw new InvalidUrlError({ input });
+        }
+        input = parsed;
       }
       else if (URL && (input instanceof URL)) {
         input = urlToOptions(input);
@@ -7334,7 +7394,7 @@ function wrap(protocols) {
         options = input;
         input = { protocol: protocol };
       }
-      if (typeof options === "function") {
+      if (isFunction(options)) {
         callback = options;
         options = null;
       }
@@ -7345,6 +7405,9 @@ function wrap(protocols) {
         maxBodyLength: exports.maxBodyLength,
       }, input, options);
       options.nativeProtocols = nativeProtocols;
+      if (!isString(options.host) && !isString(options.hostname)) {
+        options.hostname = "::1";
+      }
 
       assert.equal(options.protocol, protocol, "protocol mismatch");
       debug("options", options);
@@ -7402,35 +7465,46 @@ function removeMatchingHeaders(regex, headers) {
     undefined : String(lastValue).trim();
 }
 
-function createErrorType(code, defaultMessage) {
-  function CustomError(cause) {
+function createErrorType(code, message, baseClass) {
+  // Create constructor
+  function CustomError(properties) {
     Error.captureStackTrace(this, this.constructor);
-    if (!cause) {
-      this.message = defaultMessage;
-    }
-    else {
-      this.message = defaultMessage + ": " + cause.message;
-      this.cause = cause;
-    }
+    Object.assign(this, properties || {});
+    this.code = code;
+    this.message = this.cause ? message + ": " + this.cause.message : message;
   }
-  CustomError.prototype = new Error();
+
+  // Attach constructor and set default properties
+  CustomError.prototype = new (baseClass || Error)();
   CustomError.prototype.constructor = CustomError;
   CustomError.prototype.name = "Error [" + code + "]";
-  CustomError.prototype.code = code;
   return CustomError;
 }
 
 function abortRequest(request) {
-  for (var e = 0; e < events.length; e++) {
-    request.removeListener(events[e], eventHandlers[events[e]]);
+  for (var event of events) {
+    request.removeListener(event, eventHandlers[event]);
   }
   request.on("error", noop);
   request.abort();
 }
 
 function isSubdomain(subdomain, domain) {
-  const dot = subdomain.length - domain.length - 1;
+  assert(isString(subdomain) && isString(domain));
+  var dot = subdomain.length - domain.length - 1;
   return dot > 0 && subdomain[dot] === "." && subdomain.endsWith(domain);
+}
+
+function isString(value) {
+  return typeof value === "string" || value instanceof String;
+}
+
+function isFunction(value) {
+  return typeof value === "function";
+}
+
+function isBuffer(value) {
+  return typeof value === "object" && ("length" in value);
 }
 
 // Exports
@@ -14673,10 +14747,14 @@ const { calculateNextMilestone, getLastMilestone } = __nccwpck_require__(3505);
 const GITHUB_API_URL = 'https://api.github.com';
 const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
 const AUTH_HEADER = {
-  Authorization: `token ${GITHUB_TOKEN}`
+  Authorization: `token ${GITHUB_TOKEN}`,
 };
 const MILESTONES_ENDPOINT = `${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/milestones`;
 
+/**
+ * Get milestones from GitHub repo
+ * @return {Array} Array of milestones
+ */
 async function getMilestones() {
   return axios({
     method: 'GET',
@@ -14685,11 +14763,17 @@ async function getMilestones() {
     params: {
       state: 'all',
       sort: 'due_on',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   });
 }
 
+/**
+ * Create new milestone
+ * @param {number} number Sprint number
+ * @param {date} due_on Sprint due on date
+ * @return {object} New milestone
+ */
 function createMilestone(number, due_on) {
   return axios({
     method: 'POST',
@@ -14697,11 +14781,14 @@ function createMilestone(number, due_on) {
     headers: AUTH_HEADER,
     data: {
       title: `Sprint #${number}`,
-      due_on: due_on // YYYY-MM-DDTHH:MM:SSZ
-    }
+      due_on, // YYYY-MM-DDTHH:MM:SSZ
+    },
   });
 }
 
+/**
+ * Run the action main function
+ */
 async function main() {
   try {
     const sprintDuration = core.getInput('sprint-duration'); // Default is 1
