@@ -1,6 +1,6 @@
 {
   "name": "sprint-milestone-action",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Automatically create Milestones to manage sprints",
   "scripts": {
     "build": "ncc build index.js",

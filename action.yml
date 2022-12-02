@@ -16,5 +16,5 @@ outputs:
   milestone-dueon:
     description: 'Milestone due on'
 runs:
-  using: 'node18'
+  using: 'node16'
   main: 'dist/index.js'
