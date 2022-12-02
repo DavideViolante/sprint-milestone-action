@@ -1,0 +1,11 @@
+name: Sprint Milestone (self testing)
+
+on: ["push", "pull_request"]
+
+jobs:
+  sprint-milestone:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: davideviolante/sprint-milestone-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
