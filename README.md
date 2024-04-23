@@ -42,7 +42,7 @@ jobs:
   sprint_milestone:
     runs-on: ubuntu-latest
     steps:
-    - uses: davideviolante/sprint-milestone-action@v2.2.1
+    - uses: davideviolante/sprint-milestone-action@v2.3.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
