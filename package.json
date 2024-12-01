@@ -24,7 +24,7 @@
     "moment": "^2.30.1"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.2",
+    "@vercel/ncc": "^0.38.3",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
     "mocha": "^10.8.2",
